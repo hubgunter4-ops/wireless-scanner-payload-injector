@@ -4,7 +4,7 @@
 
 ## Higiene del repo
 
-Workflow wireless ofensivo autorizado para scan, captura de handshake, rogue AP, MITM y payload/callback. El diagnóstico está separado de la operación y no convierte las rutas ofensivas en simulación. El repositorio público no contiene credenciales, tokens, configuraciones de engagement, capturas reales, logs ni artefactos generados. Las carpetas `evidence/`, `screenshots/` y `pruebas/` se mantienen fuera del árbol publicado; `tests/` se conserva exclusivamente como control de regresión técnica. Las plantillas y fixtures, cuando existen, usan valores de laboratorio y no conceden autorización.
+Workflow Python wireless ofensivo autorizado para scan, captura de handshake, rogue AP, MITM y payload/callback. El engine conserva rutas reales y el CLI separa diagnóstico, menú operacional y cleanup; `--check-only` inspecciona binarios e interfaces sin crear directorios ni activar radio. Requiere Scapy/entorno Python y herramientas de estación según el flujo seleccionado. El repositorio público no contiene credenciales, tokens, configuraciones de engagement, capturas reales, logs ni artefactos generados. Las carpetas `evidence/`, `screenshots/` y `pruebas/` se mantienen fuera del árbol publicado; `tests/` se conserva exclusivamente como control de regresión técnica. Las plantillas y fixtures, cuando existen, usan valores de laboratorio y no conceden autorización.
 
 ## Licencia
 
@@ -16,17 +16,19 @@ El código se distribuye bajo **MIT License**. Consulta el archivo `LICENSE` par
 
 ## Flujo recomendado
 
-El flujo recomendado es ejecutar `--guided` o `--interactive`, usar `--check-only --json` para conocer dependencias, preparar interfaz monitor/uplink y cleanup, y solo después abrir el menú operacional con privilegios y alcance RF aprobado. El operador debe registrar target, ventana, privilegios, dependencias, resultado y procedimiento de cleanup. Un plan, dry-run o diagnóstico no equivale a una ejecución real ni a una vulnerabilidad confirmada.
+El flujo recomendado es ejecutar `--guided` o `--interactive`, usar `--check-only --json` para conocer dependencias, revisar `--interface` y `--uplink`, y solo después abrir el menú operacional. La operación real —scan, handshake, rogue AP, MITM y payload/callback— necesita privilegios, cleanup y alcance RF aprobado. El operador debe registrar target, ventana, privilegios, dependencias, resultado y procedimiento de cleanup. Un plan, dry-run o diagnóstico no equivale a una ejecución real ni a una vulnerabilidad confirmada.
 
 ## Pasos de instalación
 
+Requisitos base: Python 3.10+ y Scapy. Para los flujos de estación se requieren según el caso `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy` e `iptables`, además de interfaces compatibles. Instalación:
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -e .
+wireless-injector --help
 wireless-injector --guided
 wireless-injector --check-only --json
 ```
-Airmon-ng, hostapd, dnsmasq, mitmproxy, iptables y hardware compatible se preparan fuera de la instalación Python.
+El diagnóstico no activa radio; el menú operacional se inicia explícitamente con `--interactive` o sin `--check-only`.
 
 Punto de entrada principal: `wireless-injector` o `python3 src/wireless_injector.py`. Revisa siempre `--help` y la autorización vigente antes de elegir una operación activa.
