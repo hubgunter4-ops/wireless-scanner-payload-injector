@@ -1,54 +1,64 @@
-# WIRELESS INJECTOR — Scanner, Handshake, Rogue AP & MITM
+# WIRELESS INJECTOR — Wireless Assessment & Payload Workflow
 
 ![WIRELESS INJECTOR banner](assets/banner.png)
 
 ![WIRELESS INJECTOR cover](assets/cover.png)
 
-![Estado](https://img.shields.io/badge/estado-red%20team%20autorizado-6f42c1)
-![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab)
-![Plataforma](https://img.shields.io/badge/plataforma-Linux-111827)
+WIRELESS INJECTOR conserva el propósito ofensivo del script recibido: escaneo Wi-Fi con `airodump-ng`, captura de handshakes WPA/WPA2, deauth autorizada, rogue AP con `hostapd`/`dnsmasq`, DNS spoofing, MITM mediante mitmproxy, generación de payloads JavaScript y recepción de callbacks.
 
-WIRELESS INJECTOR conserva el propósito ofensivo del script recibido: escaneo Wi-Fi con `airodump-ng`, captura de handshakes WPA/WPA2, deauth para forzar asociación, configuración de rogue AP con `hostapd`/`dnsmasq`, redirección DNS, MITM mediante mitmproxy, generación de payloads JavaScript y recepción de callbacks.
+> **No es un simulador.** Las rutas operativas mantienen efectos reales sobre radio, clientes, servicios y firewall. La reconstrucción añade robustez y controles, pero no elimina deauth, rogue AP, MITM, captura, cracking ni payloads. Ejecuta únicamente en una red y una ventana cubiertas por autorización escrita.
 
-> **Este repositorio no es un simulador.** Las rutas operativas conservan sus efectos reales. Ejecuta cada acción únicamente sobre redes, clientes y dispositivos incluidos en una autorización escrita. La persona que opera el tool es responsable de la ventana de pruebas, el alcance, la restauración de NetworkManager, el rollback de firewall y la eliminación de capturas.
+## Arquitectura de implementación
 
-## Mejoras aplicadas
+```text
+src/wireless_injector.py
+    └── wireless_tool.cli
+          ├── engine.py  # escaneo, captura, rogue AP, MITM, payloads y cleanup
+          └── __init__.py
 
-La versión reforzada mantiene el menú y las acciones originales, pero valida interfaces, BSSID, canales, puertos, SSID, hosts de callback, rutas de captura y wordlists. La configuración de interfaz wireless, uplink y directorios se puede pasar por CLI o variables de entorno. El banner de código tiene tres variantes y se selecciona con `--banner-style 0|1|2`, `BANNER_STYLE=0|1|2` o una elección aleatoria cuando no se fija el estilo.
+archive/original/wireless_injector.py.original
+```
 
-También se añadió seguimiento de reglas `iptables`, rollback en orden inverso, terminación con timeout de procesos, limpieza ante interrupción, detección de herramientas mediante `shutil.which`, errores explícitos de instalación y salida de colores solo cuando stdout es una TTY.
+`src/wireless_injector.py` es un entrypoint compatible. `wireless_tool.cli` separa diagnóstico de operación; `--check-only` no crea directorios, no requiere root y no activa radio. El engine conserva el menú y las acciones reales del script original.
 
-| Área | Resultado |
+## Capacidades
+
+| Área | Implementación |
 |---|---|
-| Escaneo | Conserva `airodump-ng`, procesa CSV y valida duración e interfaz. |
-| Handshake | Conserva captura y deauth autorizada; valida BSSID, canal y ESSID. |
-| Rogue AP | Conserva `hostapd`, `dnsmasq`, forwarding y NAT; usa uplink configurable. |
-| Payloads | Conserva plantillas y JavaScript personalizado; valida callback y evita saltos de línea en valores de configuración. |
-| MITM | Conserva mitmproxy e inyección HTTP; registra y revierte reglas PREROUTING. |
-| Callbacks | Conserva receptor HTTP y liga por defecto al host indicado por `CAPTURE_BIND`. |
-| Cleanup | Detiene procesos y elimina reglas creadas por la instancia. |
+| Descubrimiento | `airodump-ng`, CSV de redes, duración e interfaz validadas. |
+| Handshake | Captura dirigida, deauth autorizada y posterior cracking con wordlist. |
+| Rogue AP | Configuración `hostapd`/`dnsmasq`, forwarding y NAT. |
+| MITM | Script mitmproxy, redirección PREROUTING y rollback de reglas. |
+| Payloads | Plantillas JavaScript, entrada personalizada, callback validado y servidor HTTP. |
+| Cleanup | Terminación de procesos, timeout/kill, rollback de reglas y restauración managed. |
+| Operación | Banner con tres variantes, diagnóstico JSON y variables de entorno. |
 
 ## Requisitos
 
-Se requiere Linux, Python 3.9+, privilegios root para las funciones de radio y las herramientas `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy`, `iptables`, `ifconfig`/`net-tools` y `iwconfig`. Se necesita un adaptador Wi-Fi compatible con modo monitor y un laboratorio inalámbrico aislado.
+La operación real requiere Linux, Python 3.10 o superior, root, un adaptador Wi-Fi compatible con modo monitor y una estación de laboratorio aislada. Deben estar disponibles `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy`, `iptables`, `ifconfig`/`net-tools` e `iwconfig`.
 
-Instala dependencias en una estación desechable o snapshot:
+Este entorno de validación no proporciona una interfaz wireless de laboratorio ni objetivos autorizados. Por ello se comprueban código, validadores, cleanup, banners y diagnóstico; no se afirma una captura de handshake, rogue AP, MITM o transmisión de frames.
+
+## Instalación
+
+```bash
+git clone https://github.com/hubgunter4-ops/wireless-scanner-payload-injector.git
+cd wireless-scanner-payload-injector
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
+
+Dependencias del sistema en una estación desechable o snapshot:
 
 ```bash
 sudo apt update
-sudo apt install -y python3 python3-pip aircrack-ng hostapd dnsmasq iptables net-tools wireless-tools
-python3 -m pip install --user mitmproxy
+sudo apt install -y aircrack-ng hostapd dnsmasq iptables net-tools wireless-tools
+python -m pip install mitmproxy
 ```
 
-## Instalación y configuración
-
-```bash
-git clone <URL_DEL_REPOSITORIO>
-cd wireless-scanner-payload-injector
-python3 -m py_compile src/wireless_injector.py
-```
-
-Configura las interfaces sin escribirlas dentro del código:
+No conectes el adaptador ni inicies servicios de captura durante la instalación. Configura las rutas de trabajo explícitamente:
 
 ```bash
 export WIRELESS_INTERFACE=wlan0
@@ -58,90 +68,85 @@ export ROGUE_AP_DIR="$PWD/rogue_ap"
 export PAYLOADS_DIR="$PWD/payloads_web"
 ```
 
-Antes de abrir el menú, muestra el banner y comprueba la CLI sin activar radio:
+## Diagnóstico sin radio
+
+Muestra una variante del banner:
 
 ```bash
-BANNER_STYLE=1 python3 src/wireless_injector.py --show-banner --banner-style 1
+wireless-injector --show-banner --banner-style 1
 ```
 
-La operación real se inicia con:
+Comprueba configuración y herramientas sin crear carpetas ni iniciar procesos wireless:
 
 ```bash
-sudo -E python3 src/wireless_injector.py --interface wlan0 --uplink eth0 --banner-style 0
+wireless-injector --check-only --json \
+  --interface wlan0 \
+  --uplink eth0
 ```
 
-## Flujo ofensivo autorizado
+La salida JSON diferencia `missing_tools`, interfaz monitor prevista, uplink, `radio_started: false` y la nota de diagnóstico.
 
-El menú mantiene las opciones originales: escaneo de redes, captura de handshake, cracking con wordlist, configuración e inicio de rogue AP, creación de payload JavaScript, generación de script mitmproxy, inicio de proxy transparente, servidor de captura y ataque completo. Cada una puede modificar el entorno inalámbrico o la tabla de firewall.
+## Operación ofensiva autorizada
 
-Para capturar un handshake, valida previamente BSSID y canal contra el alcance firmado. Para rogue AP y MITM, registra la interfaz uplink, el rango DHCP, el puerto del proxy y los clientes de laboratorio. Para callbacks, utiliza una dirección privada del laboratorio y elimina `payloads_web/capturas.log` después de conservar la evidencia autorizada.
+La entrada interactiva conserva las acciones del tool original:
 
-## Sanitización y rollback
+```bash
+sudo -E wireless-injector --interface wlan0 --uplink eth0 --banner-style 0
+```
 
-Las interfaces aceptan solo nombres de hasta 15 caracteres formados por letras, números, punto, guion o guion bajo. MAC/BSSID exige seis octetos hexadecimales; el canal se restringe a 1–196; el puerto a 1–65535; el SSID se limita a 32 caracteres sin saltos de línea; y el callback acepta una IP o hostname sintácticamente acotado.
+Las acciones incluyen escaneo, captura de handshake, cracking, configuración/inicio de rogue AP, creación de payload JavaScript, creación/inicio de mitmproxy, servidor de callbacks y flujo completo. Antes de cada acción registra BSSID, canal, ESSID, clientes, interfaz, uplink, puertos, regla de firewall y condición de parada.
 
-Los subprocesses se ejecutan como listas de argumentos, sin `shell=True`. Las reglas añadidas durante NAT o redirect se guardan como comandos de eliminación y se ejecutan en orden inverso al detener la operación. Los procesos `dnsmasq`, `hostapd` y mitmproxy se terminan con timeout y, si es necesario, `kill`.
+El repositorio no convierte la operación real en un mock. Para generar evidencia de la operación completa, utiliza una red RF aislada con clientes sintéticos y conserva únicamente capturas anonimizadas según la política del engagement.
 
-La limpieza no puede garantizar la recuperación de todos los cambios externos si el sistema se apaga o un proceso modifica estado fuera de esta instancia. Conserva un snapshot, registra la tabla `iptables` antes y después, y valida NetworkManager y la interfaz managed al finalizar.
+## Sanitización y robustez
+
+Las interfaces aceptan únicamente nombres de hasta 15 caracteres con letras, números, punto, guion o guion bajo. Las MAC/BSSID exigen seis octetos hexadecimales; los canales se limitan a 1–196; los puertos, a 1–65535; los SSID, a 32 caracteres sin saltos de línea; y los callbacks, a IP o hostname sintácticamente acotado.
+
+Los comandos externos se ejecutan como listas de argumentos, sin `shell=True`. Las rutas de salida se configuran mediante variables o CLI y se registran las reglas de eliminación en orden inverso. El cleanup intenta terminar procesos, usa `kill` cuando el timeout expira y limpia la tabla de reglas registrada por la instancia.
+
+La robustez del proceso no garantiza rollback frente a un apagado abrupto, cambios realizados por operadores externos o reglas que no pertenecen a esta instancia. Toma snapshot de `iptables`, registra el estado de NetworkManager y valida la interfaz managed al finalizar.
 
 ## TTPs y perspectiva purple team
 
-| TTP ofensiva | Acción del tool | Telemetría defensiva |
+| TTP | Acción | Telemetría defensiva |
 |---|---|---|
-| Network Service Scanning | `airodump-ng` y listado de redes | WIDS/WIPS, eventos del AP, aparición de interfaces monitor. |
-| Adversary-in-the-Middle | Rogue AP, DNS spoofing y proxy transparente | Detección de SSID duplicado, cambios ARP/DNS, certificados y proxy anómalo. |
-| Network Denial of Service | Deauth durante captura de handshake | Alertas de frames deauth, pérdida de clientes y cambios de canal. |
-| Input/Content Injection | Inyección JS en respuestas HTTP | WAF, proxy, CSP, integridad de contenido y logs de navegador. |
-| Credential Access | Cracking autorizado de capturas | Custodia de wordlists, procesos aircrack y controles de acceso a `.cap`. |
+| Network Service Scanning | `airodump-ng` y enumeración de redes | WIDS/WIPS, aparición de modo monitor y eventos del AP. |
+| Adversary-in-the-Middle | Rogue AP, DNS spoofing y proxy transparente | SSID duplicado, ARP/DNS anómalo, certificados y proxy. |
+| Network Denial of Service | Deauth durante captura | Frames deauth, pérdida de clientes y cambios de canal. |
+| Input/Content Injection | Inyección JS en respuestas HTTP | WAF, CSP, proxy, integridad de contenido y logs de navegador. |
+| Credential Access | Cracking de capturas autorizadas | Custodia de `.cap`, procesos aircrack y acceso a wordlists. |
 
-## Pruebas
-
-Las pruebas unitarias solo cubren validación, banner y cleanup con procesos falsos; no abren sockets de radio ni llaman a `airmon-ng`, `aireplay-ng`, `hostapd`, `dnsmasq`, mitmproxy o iptables reales:
+## Pruebas comprobables
 
 ```bash
-PYTHONPATH=. python3 -m unittest discover -s tests -v
-python3 -m py_compile src/wireless_injector.py
+python3 -m py_compile src/wireless_injector.py src/wireless_tool/*.py
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+wireless-injector --show-banner --banner-style 1
+wireless-injector --check-only --json --interface wlan0 --uplink eth0
 ```
 
-## Evidencia visual
-
-Las imágenes de `evidence/` documentan las tres variantes del banner y la salida de comprobaciones locales. No se generaron capturas de tráfico real ni se activó un rogue AP desde este repositorio durante la preparación.
-
-| Archivo | Descripción |
-|---|---|
-| `evidence/01-banner-variant-0.png` | Banner ASCII y validaciones de configuración. |
-| `evidence/02-banner-variant-1.png` | Banner Unicode y validaciones de BSSID/puerto. |
-| `evidence/03-banner-variant-2.png` | Banner compacto y resumen de cleanup. |
-
-Regenera las evidencias:
-
-```bash
-python3 tools/render_evidence.py
-```
+La suite cubre validación de entradas, banners, construcción side-effect-free, cleanup/rollback con procesos falsos y diagnóstico JSON. No llama a `airmon-ng`, `airodump-ng`, `aireplay-ng`, `hostapd`, `dnsmasq`, mitmproxy ni `iptables` reales durante la validación.
 
 ## Estructura
 
 ```text
 .
+├── archive/original/wireless_injector.py.original
 ├── assets/
-│   ├── banner.png
-│   ├── cover.png
-│   └── visual-review.md
 ├── docs/
 │   ├── authorization.md
 │   ├── cleanup.md
 │   └── operator-checklist.md
 ├── evidence/
-│   ├── 01-banner-variant-0.png
-│   ├── 02-banner-variant-1.png
-│   ├── 03-banner-variant-2.png
-│   └── visual-review.md
+├── pyproject.toml
 ├── src/
 │   ├── wireless_injector.py
-│   └── wireless_injector.py.original
+│   └── wireless_tool/
+│       ├── __init__.py
+│       ├── cli.py
+│       └── engine.py
 ├── tests/test_wireless.py
-├── tools/render_evidence.py
-└── README.md
+└── tools/render_evidence.py
 ```
 
 ## Referencias

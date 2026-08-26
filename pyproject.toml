@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wireless-scanner-payload-injector"
+version = "2.1.0"
+description = "Authorized wireless assessment and payload workflow tool"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Manus AI"}]
+license = {text = "MIT"}
+
+[project.scripts]
+wireless-injector = "wireless_tool.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
