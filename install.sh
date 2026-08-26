@@ -2,7 +2,8 @@
 set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-VENV_DIR="${VENV_DIR:-$ROOT_DIR/.venv}"
+PROJECT_SLUG="$(basename "$ROOT_DIR")"
+VENV_DIR="${VENV_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/$PROJECT_SLUG/venv}"
 DRY_RUN=0
 for arg in "$@"; do
   case "$arg" in

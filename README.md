@@ -25,7 +25,8 @@ Requisitos base: Bash, Python 3.10+ y Scapy. Para los flujos de estación se req
 ./install.sh --help
 ./install.sh --dry-run
 ./install.sh
-. .venv/bin/activate
+VENV_DIR="${VENV_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/06-wireless-scanner-payload-injector/venv}"
+. "$VENV_DIR/bin/activate"
 wireless-injector --help
 wireless-injector --guided
 wireless-injector --check-only --json
