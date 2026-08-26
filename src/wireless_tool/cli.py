@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import shutil
+import sys
 from pathlib import Path
 
 from .engine import BANNER_VARIANTS, WirelessTool
@@ -21,7 +23,38 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--check-only", action="store_true", help="valida configuración y dependencias sin crear archivos ni activar radio")
     parser.add_argument("--json", action="store_true", help="emite el diagnóstico en JSON")
     parser.add_argument("--no-menu", action="store_true", help="reservado para integraciones no interactivas")
+    parser.add_argument("--interactive", action="store_true", help="selector operacional diagnóstico/flujo wireless")
+    parser.add_argument("--guided", action="store_true", help="muestra etapas y termina sin activar radio")
     return parser
+
+
+def guided_flow() -> str:
+    return "\n".join([
+        "Flujo WIRELESS INJECTOR: scope -> diagnóstico -> scan -> captura -> payload/callback -> cleanup.",
+        "El modo diagnóstico no crea directorios ni activa radio; el flujo operacional exige laboratorio y privilegios aprobados.",
+        "Verifica interfaz monitor, uplink, dependencias y procedimiento de restauración antes de continuar.",
+    ])
+
+
+def _interactive_select(args: argparse.Namespace) -> None:
+    if not sys.stdin.isatty():
+        raise ValueError("--interactive requiere una terminal interactiva")
+    print(guided_flow())
+    choice = input("Selecciona [1] diagnóstico [2] operación [q] cancelar: ").strip().lower()
+    if choice == "1":
+        args.check_only = True
+        args.no_menu = False
+    elif choice == "2":
+        args.check_only = False
+        args.no_menu = False
+    else:
+        raise ValueError("operación cancelada por el operador")
+
+
+def _banner_style(style: int | None) -> int:
+    if style is None:
+        return random.SystemRandom().randrange(len(BANNER_VARIANTS))
+    return style
 
 
 def check_environment(tool: WirelessTool) -> dict:
@@ -41,7 +74,14 @@ def check_environment(tool: WirelessTool) -> dict:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        tool = WirelessTool(interface=args.interface, uplink_interface=args.uplink, banner_style=args.banner_style, create_dirs=not args.check_only and not args.show_banner)
+        style = _banner_style(args.banner_style)
+        if args.guided:
+            print(BANNER_VARIANTS[style])
+            print(guided_flow())
+            return 0
+        if args.interactive:
+            _interactive_select(args)
+        tool = WirelessTool(interface=args.interface, uplink_interface=args.uplink, banner_style=style, create_dirs=not args.check_only and not args.show_banner)
         if args.show_banner:
             tool.banner()
             return 0
@@ -55,6 +95,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.no_menu:
             raise ValueError("--no-menu requiere una suborden operativa futura; no se inicia una acción implícita")
+        print("[WIRELESS FLOW] scope -> validate -> diagnose -> scan/capture -> payload/callback -> cleanup")
         tool.run()
         return 0
     except (ValueError, RuntimeError, OSError) as exc:

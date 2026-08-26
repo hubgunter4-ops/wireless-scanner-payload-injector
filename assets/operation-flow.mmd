@@ -1,0 +1,8 @@
+flowchart LR
+    A[RF scope] --> B[Wireless guided]
+    B --> C[Check-only / dependencies]
+    C --> D[Monitor interface]
+    D --> E[Scan]
+    E --> F[Handshake / rogue AP / MITM]
+    F --> G[Payload + callback]
+    G --> H[Cleanup + report]

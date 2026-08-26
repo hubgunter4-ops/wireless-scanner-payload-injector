@@ -13,3 +13,12 @@ authorization.json
 .env
 .DS_Store
 evidence/raw/
+evidence/
+screenshots/
+pruebas/
+artifacts/
+results/
+*.apk
+*.aab
+*.key
+*.pem
