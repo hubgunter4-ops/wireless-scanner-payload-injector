@@ -20,11 +20,12 @@ El flujo recomendado es ejecutar `--guided` o `--interactive`, usar `--check-onl
 
 ## Pasos de instalación
 
-Requisitos base: Python 3.10+ y Scapy. Para los flujos de estación se requieren según el caso `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy` e `iptables`, además de interfaces compatibles. Instalación:
+Requisitos base: Bash, Python 3.10+ y Scapy. Para los flujos de estación se requieren según el caso `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy` e `iptables`, además de interfaces compatibles. Instalación mediante el script del repositorio:
 ```bash
-python3 -m venv .venv
+./install.sh --help
+./install.sh --dry-run
+./install.sh
 . .venv/bin/activate
-python -m pip install -e .
 wireless-injector --help
 wireless-injector --guided
 wireless-injector --check-only --json
