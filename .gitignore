@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.log
+*.cap
+*.pcap
+*.pcapng
+wireless_captures/
+rogue_ap/*.conf
+payloads_web/capturas.log
+payloads_web/*.js
+authorization.json
+.env
+.DS_Store
+evidence/raw/
