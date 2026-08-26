@@ -18,19 +18,16 @@ El código se distribuye bajo **MIT License**. Consulta el archivo `LICENSE` par
 
 El flujo recomendado es ejecutar `--guided` o `--interactive`, usar `--check-only --json` para conocer dependencias, revisar `--interface` y `--uplink`, y solo después abrir el menú operacional. La operación real —scan, handshake, rogue AP, MITM y payload/callback— necesita privilegios, cleanup y alcance RF aprobado. El operador debe registrar target, ventana, privilegios, dependencias, resultado y procedimiento de cleanup. Un plan, dry-run o diagnóstico no equivale a una ejecución real ni a una vulnerabilidad confirmada.
 
-## Pasos de instalación
+## PASOS DE INSTALACION
 
-Requisitos base: Bash, Python 3.10+ y Scapy. Para los flujos de estación se requieren según el caso `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy` e `iptables`, además de interfaces compatibles. Instalación mediante el script del repositorio:
+Requiere Bash y Python 3.10 o superior. El instalador usa el site de paquetes del usuario actual y no crea ni activa `.venv`; el entrypoint suele quedar en `$HOME/.local/bin`.
+
 ```bash
 ./install.sh --help
-./install.sh --dry-run
 ./install.sh
-VENV_DIR="${VENV_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/06-wireless-scanner-payload-injector/venv}"
-. "$VENV_DIR/bin/activate"
+export PATH="$HOME/.local/bin:$PATH"
 wireless-injector --help
-wireless-injector --guided
 wireless-injector --check-only --json
 ```
-El diagnóstico no activa radio; el menú operacional se inicia explícitamente con `--interactive` o sin `--check-only`.
 
-Punto de entrada principal: `wireless-injector` o `python3 src/wireless_injector.py`. Revisa siempre `--help` y la autorización vigente antes de elegir una operación activa.
+El modo `--check-only` permite comprobar configuración sin transmitir. No se ejecutan capturas ni inyecciones durante la instalación; cualquier operación de laboratorio exige autorización y confirmación explícita según el flujo documentado.
