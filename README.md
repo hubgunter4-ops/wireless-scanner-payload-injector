@@ -31,3 +31,16 @@ wireless-injector --check-only --json
 ```
 
 El modo `--check-only` permite comprobar configuración sin transmitir. No se ejecutan capturas ni inyecciones durante la instalación; cualquier operación de laboratorio exige autorización y confirmación explícita según el flujo documentado.
+
+## Guía de ejecución
+
+Empieza con el modo de comprobación:
+
+```bash
+./install.sh --help
+./install.sh --guided
+PYTHONPATH=src python3 src/wireless_injector.py --check-only
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+```
+
+`--check-only` valida dependencias y configuración sin root ni radio. La operación real requiere una interfaz wireless compatible, permisos de laboratorio y autorización para cada target; revisa límites, firewall y cleanup antes de activar cualquier fase. No guardes capturas, hashes, credenciales ni artefactos operativos en Git.
