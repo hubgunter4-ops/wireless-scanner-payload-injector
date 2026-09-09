@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Wireless Scanner &amp; Payload Injector</title>
+  <subtitle>Actualizaciones de una herramienta de evaluación inalámbrica autorizada para Linux</subtitle>
+  <id>https://github.com/hubgunter4-ops/wireless-scanner-payload-injector</id>
+  <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector" rel="alternate" />
+  <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/blob/main/docs/rss.xml" rel="self" />
+  <updated>2026-09-09T08:00:00Z</updated>
+  <author><name>hubgunter4-ops</name></author>
+  <entry>
+    <title>Versión 2.1.0 documentada</title>
+    <id>https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/tag/v2.1.0</id>
+    <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector" rel="alternate" />
+    <updated>2026-09-09T08:00:00Z</updated>
+    <summary>Documentación de instalación, diagnóstico seguro, autorización, seguridad y redistribución. Las capacidades operativas no se modifican.</summary>
+  </entry>
+</feed>
