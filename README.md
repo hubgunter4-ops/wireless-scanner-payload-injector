@@ -6,6 +6,12 @@ Herramienta Python para organizar flujos de **evaluación inalámbrica autorizad
 
 > **Estado:** experimental · **Versión:** 2.1.0 · **Licencia:** MIT · **Python:** 3.10+
 
+## Captura de interfaz
+
+La siguiente captura procede de una ejecución real del CLI en un display virtual y muestra únicamente `--guided`. No se activó la radio, no se transmitieron frames y no se utilizaron datos de producción.
+
+![CLI en modo guided, sin radio](assets/screenshots/cli-guided.png)
+
 ## Antes de usarlo
 
 Las capacidades de deauth, captura de handshakes, cracking, rogue AP, DNS spoofing, MITM, inyección JavaScript y callbacks requieren autorización escrita específica. La autorización para escanear no incluye las demás técnicas. Trabaja con clientes, SSID, BSSID, credenciales y datos sintéticos de laboratorio; no guardes capturas, cookies, tokens, logs ni material de autenticación en Git.
