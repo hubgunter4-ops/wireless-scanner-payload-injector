@@ -12,6 +12,26 @@ Este recorrido valida la instalación sin activar la radio ni crear directorios 
 | Red | No necesaria para el diagnóstico |
 | Privilegios | No necesarios para `--check-only` |
 
+## Dependencias del sistema
+
+El proyecto no incluye ni instala las herramientas inalámbricas y de proxy. La comprobación local usada para preparar esta documentación encontró ausentes `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq` y `mitmproxy`; `iptables` estaba disponible. `airmon-ng`, `airodump-ng`, `aireplay-ng` y `aircrack-ng` normalmente forman parte de `aircrack-ng`.
+
+En Debian/Ubuntu, los paquetes habituales para un laboratorio son:
+
+```bash
+sudo apt update
+sudo apt install aircrack-ng hostapd dnsmasq mitmproxy iptables
+```
+
+Verifica los ejecutables después de la instalación y antes de abrir el menú operacional:
+
+```bash
+command -v airmon-ng airodump-ng aireplay-ng aircrack-ng hostapd dnsmasq mitmproxy iptables
+wireless-injector --check-only --json
+```
+
+Los paquetes disponibles dependen de la distribución y de sus repositorios. Instala y prueba estas dependencias únicamente en una máquina de laboratorio autorizada; no es necesario instalarlas para ejecutar las pruebas unitarias o el modo `--guided`.
+
 ## Instalación sin activar funciones operativas
 
 ```bash

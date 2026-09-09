@@ -7,6 +7,8 @@ Todos los cambios relevantes de este proyecto se documentan en este archivo.
 ### Documentación
 
 - Se documenta el flujo de diagnóstico, operación autorizada y limpieza.
+- Se aclara la diferencia entre el paquete Python y las dependencias de sistema.
+- Se registra que el diagnóstico local encontró ausentes `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq` y `mitmproxy`; `iptables` estaba disponible.
 - Se añade una política de seguridad con alcance, datos prohibidos y reporte responsable.
 - Se añade un tutorial reproducible con diagnóstico seguro y laboratorio aislado.
 - Se añaden materiales de promoción, redistribución y un feed Atom estático.

@@ -40,7 +40,23 @@ export PATH="$HOME/.local/bin:$PATH"
 wireless-injector --help
 ```
 
-Las dependencias de sistema (`aircrack-ng`, `hostapd`, `dnsmasq`, `mitmproxy` e `iptables`) deben prepararse en una máquina de laboratorio conforme a la distribución utilizada. El instalador del proyecto no inicia operaciones inalámbricas.
+El paquete Python no instala las herramientas de sistema. En el diagnóstico local realizado para esta documentación faltan `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq` y `mitmproxy`; `iptables` sí está disponible. Los cuatro primeros ejecutables suelen provenir del paquete `aircrack-ng`, mientras que `hostapd`, `dnsmasq` y `mitmproxy` se proporcionan como paquetes separados según la distribución.
+
+En Debian/Ubuntu, prepara una máquina de laboratorio y verifica los nombres de paquete disponibles antes de instalar:
+
+```bash
+sudo apt update
+sudo apt install aircrack-ng hostapd dnsmasq mitmproxy iptables
+```
+
+Después confirma cada ejecutable sin iniciar ninguna operación:
+
+```bash
+command -v airmon-ng airodump-ng aireplay-ng aircrack-ng hostapd dnsmasq mitmproxy iptables
+wireless-injector --check-only --json
+```
+
+Los nombres y versiones pueden variar en Fedora, Arch u otras distribuciones. Consulta el gestor de paquetes de tu distribución y no copies comandos de instalación a un sistema de producción. El instalador del proyecto sólo instala el paquete Python y no inicia operaciones inalámbricas.
 
 ## Diagnóstico sin radio
 
