@@ -26,6 +26,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from .dependencies import check_dependencies, install_missing
+
 
 class Colors:
     RED = "\033[91m"
@@ -144,27 +146,48 @@ class WirelessTool:
             print(f"{Colors.YELLOW}[*] Ejecuta: sudo python3 {sys.argv[0]}{Colors.RESET}")
             sys.exit(1)
 
-    def check_tools(self):
-        """Verifica herramientas instaladas."""
-        tools = ["airmon-ng", "airodump-ng", "aireplay-ng", "aircrack-ng",
-                 "hostapd", "dnsmasq", "mitmproxy", "iptables"]
-        missing = [tool for tool in tools if shutil.which(tool) is None]
+    def check_tools(self, interactive=False, install=False, dry_run=False):
+        """Verifica herramientas instaladas, sin preguntar por defecto.
+
+        No interactivo por defecto: en uso no interactivo (scripts, CI,
+        --check-only) nunca llama a input(). Solo pregunta si se pasa
+        interactive=True y hay una terminal.
+        Devuelve la lista de herramientas que faltan (vacía si están todas).
+        Si install=True, instala lo que falta con install_missing().
+        """
+        result = check_dependencies()
+        missing = result["missing"]
         if missing:
             print(f"{Colors.YELLOW}[!] Faltan herramientas: {', '.join(missing)}{Colors.RESET}")
-            resp = input("¿Intentar instalar? [s/N]: ").strip().lower()
-            if resp == "s":
-                self.instalar_herramientas(missing)
+            print(
+                f"{Colors.YELLOW}[*] Paquetes apt: "
+                f"{', '.join(result['packages'])}{Colors.RESET}"
+            )
+            if install:
+                install_missing(missing, dry_run=dry_run)
+                return check_dependencies()["missing"]
+            if interactive and sys.stdin.isatty():
+                resp = input("¿Intentar instalar? [s/N]: ").strip().lower()
+                if resp == "s":
+                    self.instalar_herramientas(missing)
+                    return check_dependencies()["missing"]
         else:
             print(f"{Colors.GREEN}[+] Todas las herramientas disponibles.{Colors.RESET}\n")
+        return missing
 
-    def instalar_herramientas(self, tools):
+    def instalar_herramientas(self, tools, dry_run=False, use_sudo=None):
+        """Instala las herramientas que faltan, por paquete apt real.
+
+        Antes hacía ``apt-get install -y airmon-ng airodump-ng ...``,
+        pero esos nombres son binarios, no paquetes apt, así que apt
+        fallaba. Ahora se traduce cada binario a su paquete con
+        TOOL_PACKAGES (airmon-ng/airodump-ng/aireplay-ng/aircrack-ng
+        -> aircrack-ng, etc.), se deduplica, se hace apt-get update
+        y se verifica con shutil.which después de instalar.
+        """
         if not tools:
             return True
-        cmd = ["apt-get", "install", "-y", *tools]
-        result = subprocess.run(cmd, check=False)
-        if result.returncode != 0:
-            raise RuntimeError(f"No se pudieron instalar las herramientas: {', '.join(tools)}")
-        return True
+        return install_missing(list(tools), dry_run=dry_run, use_sudo=use_sudo)
 
     # ========================================================================
     # GESTIÓN DE INTERFAZ

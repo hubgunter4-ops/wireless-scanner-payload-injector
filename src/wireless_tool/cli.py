@@ -5,13 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import random
-import shutil
 import sys
-from pathlib import Path
 
+from .dependencies import (
+    REQUIRED_TOOLS,
+    build_install_commands,
+    check_dependencies,
+    install_missing,
+)
 from .engine import BANNER_VARIANTS, WirelessTool
-
-REQUIRED_TOOLS = ("airmon-ng", "airodump-ng", "aireplay-ng", "aircrack-ng", "hostapd", "dnsmasq", "mitmproxy", "iptables")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -21,6 +23,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--banner-style", type=int, choices=range(len(BANNER_VARIANTS)))
     parser.add_argument("--show-banner", action="store_true", help="muestra el banner y termina")
     parser.add_argument("--check-only", action="store_true", help="valida configuración y dependencias sin crear archivos ni activar radio")
+    parser.add_argument("--install-missing", action="store_true", help="con --check-only, instala las dependencias del sistema que falten (apt-get)")
+    parser.add_argument("--dry-run", action="store_true", help="con --check-only, solo imprime los comandos apt que se ejecutarían, sin ejecutar nada")
     parser.add_argument("--json", action="store_true", help="emite el diagnóstico en JSON")
     parser.add_argument("--no-menu", action="store_true", help="reservado para integraciones no interactivas")
     parser.add_argument("--interactive", action="store_true", help="selector operacional diagnóstico/flujo wireless")
@@ -58,13 +62,15 @@ def _banner_style(style: int | None) -> int:
 
 
 def check_environment(tool: WirelessTool) -> dict:
-    tools = {name: shutil.which(name) for name in REQUIRED_TOOLS}
+    deps = check_dependencies()
     return {
         "interface": tool.interface,
         "monitor_interface": tool.mon_interface,
         "uplink_interface": tool.uplink_interface,
-        "required_tools": tools,
-        "missing_tools": [name for name, path in tools.items() if path is None],
+        "required_tools": deps["tools"],
+        "missing_tools": deps["missing"],
+        "missing_packages": deps["packages"],
+        "packages": deps["packages"],
         "root": False,
         "radio_started": False,
         "note": "diagnóstico únicamente; no se crearon directorios ni se transmitieron frames",
@@ -87,12 +93,46 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.check_only:
             payload = check_environment(tool)
+            # --dry-run: solo imprimir los comandos apt, sin ejecutar nada.
+            # No instala, aunque se pase --install-missing.
+            if args.dry_run:
+                commands = build_install_commands(payload["missing_tools"])
+                payload["dry_run"] = True
+                payload["dry_run_commands"] = [" ".join(c) for c in commands]
+                payload["installed"] = False
+                if args.json:
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                else:
+                    tool.banner()
+                    for command in commands:
+                        print("[DRY-RUN] " + " ".join(command))
+                    if not commands:
+                        print("[DRY-RUN] No falta ninguna dependencia.")
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                return 0
+            # --install-missing: instalar solo con --check-only y solo
+            # si el operador lo pidió explícitamente.
+            if args.install_missing:
+                if payload["missing_tools"]:
+                    install_missing(payload["missing_tools"])
+                    payload = check_environment(tool)
+                    payload["installed"] = True
+                    if payload["missing_tools"]:
+                        print(
+                            "[!] Tras instalar, siguen faltando: "
+                            + ", ".join(payload["missing_tools"])
+                        )
+                        return 2
+                else:
+                    payload["installed"] = False
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
             else:
                 tool.banner()
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
             return 0
+        if args.install_missing or args.dry_run:
+            raise ValueError("--install-missing y --dry-run solo funcionan con --check-only; no instalan nada en modo operacional")
         if args.no_menu:
             raise ValueError("--no-menu requiere una suborden operativa futura; no se inicia una acción implícita")
         print("[WIRELESS FLOW] scope -> validate -> diagnose -> scan/capture -> payload/callback -> cleanup")
