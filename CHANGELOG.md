@@ -2,6 +2,26 @@
 
 Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
+## [Unreleased]
+
+### IoT pentest como base
+
+- 6 perfiles IoT de diagnóstico basados en la guía pública
+  `uqbarun/uqbarun.github.io@4f09668` ("IoT pentest",
+  `_wiki/iot-pentest.md`, 2023-06-01): `web-api`, `firmware`,
+  `wifi`, `ble`, `zigbee` y `sdr`, con habilidades, pasos y
+  CWE/CAPEC/CPE de la guía (`src/wireless_tool/iot_profiles.py`,
+  `docs/iot-pentest.md`).
+- Mapa binario → paquete apt para las herramientas IoT con paquete
+  real: `tshark`, `nmap`, `binwalk`, `bluez` (bluetoothctl/hcitool/
+  gatttool), `rtl-sdr` y `hackrf`. Zigbee no tiene binario apt
+  estándar y se marca como hardware dedicado, sin inventar paquete.
+- CLI: `--list-iot-profiles` y `--iot-profile <perfil>` solo con
+  `--check-only` (diagnóstico; también con `--dry-run` y
+  `--install-missing`). El `--check-only` base no cambia.
+- Los perfiles solo comprueban dependencias con `shutil.which`;
+  no activan radio, no escanean, no descifran ni ejecutan ataques.
+
 ## [2.1.0] — 2026-09-09
 
 ### Documentación

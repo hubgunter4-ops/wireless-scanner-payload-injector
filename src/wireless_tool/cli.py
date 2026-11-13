@@ -14,6 +14,7 @@ from .dependencies import (
     install_missing,
 )
 from .engine import BANNER_VARIANTS, WirelessTool
+from .iot_profiles import check_profile, get_profile, list_profiles
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -29,6 +30,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-menu", action="store_true", help="reservado para integraciones no interactivas")
     parser.add_argument("--interactive", action="store_true", help="selector operacional diagnóstico/flujo wireless")
     parser.add_argument("--guided", action="store_true", help="muestra etapas y termina sin activar radio")
+    parser.add_argument("--list-iot-profiles", action="store_true", help="lista los perfiles IoT (guía uqbarun 4f09668) y termina, sin activar radio")
+    parser.add_argument("--iot-profile", choices=list_profiles(), help="con --check-only, comprueba además las dependencias del perfil IoT indicado")
     return parser
 
 
@@ -81,6 +84,18 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         style = _banner_style(args.banner_style)
+        if args.list_iot_profiles:
+            profiles = [get_profile(pid) for pid in list_profiles()]
+            if args.json:
+                print(json.dumps(profiles, ensure_ascii=False, indent=2))
+            else:
+                for profile in profiles:
+                    print(f"{profile['id']}: {profile['title']} ({profile['source_section']})")
+                    print(f"  Herramientas: {', '.join(profile['tools']) or 'ninguna por apt; hardware dedicado'}")
+                    print(f"  CWE: {', '.join(profile['cwe'])}")
+            return 0
+        if args.iot_profile and not args.check_only:
+            raise ValueError("--iot-profile solo funciona con --check-only; es diagnóstico, no ejecuta el perfil")
         if args.guided:
             print(BANNER_VARIANTS[style])
             print(guided_flow())
@@ -93,6 +108,18 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.check_only:
             payload = check_environment(tool)
+            if args.iot_profile:
+                iot = check_profile(args.iot_profile)
+                payload["iot_profile"] = iot
+                # --dry-run / --install-missing usan la lista combinada.
+                combined = list(payload["missing_tools"])
+                for name in iot["missing"]:
+                    if name not in combined:
+                        combined.append(name)
+                payload["missing_tools"] = combined
+                payload["missing_packages"] = payload["packages"] = list(
+                    dict.fromkeys(payload["missing_packages"] + iot["packages"])
+                )
             # --dry-run: solo imprimir los comandos apt, sin ejecutar nada.
             # No instala, aunque se pase --install-missing.
             if args.dry_run:

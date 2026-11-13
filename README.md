@@ -35,6 +35,7 @@ Consulta la [política de seguridad](SECURITY.md) y la [guía de autorización](
 | Intercepción | Integración con mitmproxy para respuestas HTTP en un entorno controlado |
 | Payloads | Plantillas y generación de JavaScript/callbacks; revisar siempre el contenido |
 | Operación | Menú interactivo, registro de alcance y rollback de procesos/reglas |
+| IoT | 6 perfiles de diagnóstico basados en la guía pública `uqbarun/uqbarun.github.io@4f09668` (web-api, firmware, wifi, ble, zigbee, sdr); solo chequeo de dependencias, sin ejecutar el perfil |
 
 ## Instalación
 
@@ -75,6 +76,24 @@ Este modo no requiere root, no activa la interfaz, no transmite frames y no crea
 
 ```bash
 wireless-injector --guided
+```
+
+### Perfiles IoT
+
+Basados en la guía pública de IoT pentest de
+[uqbarun/uqbarun.github.io@4f09668](https://github.com/uqbarun/uqbarun.github.io/commit/4f096689b0ac4527682f66c36a8d29ca87ff647d)
+(`_wiki/iot-pentest.md`, 2023-06-01). Son 6 perfiles de diagnóstico
+— `web-api`, `firmware`, `wifi`, `ble`, `zigbee` y `sdr` — que solo
+comprueban qué herramientas faltan para ese perfil, con sus
+CWE/CAPEC de la guía. No ejecutan el perfil ni activan radio.
+Zigbee no tiene binario apt estándar y se marca como hardware
+dedicado, sin inventar paquete. Detalle en
+[docs/iot-pentest.md](docs/iot-pentest.md).
+
+```bash
+wireless-injector --list-iot-profiles
+wireless-injector --check-only --json --iot-profile ble
+wireless-injector --check-only --iot-profile sdr --dry-run
 ```
 
 ## Pruebas

@@ -33,12 +33,39 @@ TOOL_PACKAGES = {
 
 REQUIRED_TOOLS = tuple(TOOL_PACKAGES)
 
+# Herramientas IoT de la guía uqbarun/uqbarun.github.io@4f09668
+# ("IoT pentest", _wiki/iot-pentest.md, 2023-06-01, FredyRosero).
+# Solo se añaden binarios con paquete apt real en Debian/Kali:
+# tshark -> tshark, nmap -> nmap, binwalk -> binwalk,
+# bluetoothctl/hcitool/gatttool -> bluez, rtl_sdr -> rtl-sdr,
+# hackrf_info -> hackrf. Zigbee no tiene binario apt estándar:
+# exige hardware dedicado (CC2531, ConBee II, KillerBee) y por eso
+# no aparece aquí; su perfil lo documenta como hardware_required.
+# Estas herramientas NO forman parte de REQUIRED_TOOLS: el
+# --check-only base sigue comprobando solo el flujo Wi-Fi, y los
+# perfiles IoT se comprueban aparte con --iot-profile.
+IOT_TOOL_PACKAGES = {
+    "tshark": "tshark",
+    "nmap": "nmap",
+    "binwalk": "binwalk",
+    "bluetoothctl": "bluez",
+    "hcitool": "bluez",
+    "gatttool": "bluez",
+    "rtl_sdr": "rtl-sdr",
+    "hackrf_info": "hackrf",
+}
+
+ALL_TOOL_PACKAGES = {**TOOL_PACKAGES, **IOT_TOOL_PACKAGES}
+
 
 def packages_for_tools(tools):
-    """Paquetes apt deduplicados para una lista de binarios, en orden."""
+    """Paquetes apt deduplicados para una lista de binarios, en orden.
+
+    Acepta binarios base (TOOL_PACKAGES) e IoT (IOT_TOOL_PACKAGES).
+    """
     packages = []
     for tool in tools or []:
-        package = TOOL_PACKAGES.get(tool)
+        package = ALL_TOOL_PACKAGES.get(tool)
         if package is None:
             raise ValueError(f"Herramienta desconocida: {tool!r}")
         if package not in packages:
