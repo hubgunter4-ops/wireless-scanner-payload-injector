@@ -1,5 +1,12 @@
 # Wireless Scanner & Payload Injector
 
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/github/license/hubgunter4-ops/wireless-scanner-payload-injector)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/blob/main/LICENSE)
+[![Top Language](https://img.shields.io/github/languages/top/hubgunter4-ops/wireless-scanner-payload-injector)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector)
+[![Last commit](https://img.shields.io/github/last-commit/hubgunter4-ops/wireless-scanner-payload-injector/main)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/commits/main)
+[![Repo size](https://img.shields.io/github/repo-size/hubgunter4-ops/wireless-scanner-payload-injector)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector)
+[![Uso autorizado](https://img.shields.io/badge/Uso%20autorizado-Laboratorio%20%C3%BAnicamente-yellow)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector)
+
 Herramienta Python para organizar flujos de **evaluación inalámbrica autorizada** en Linux, desde el diagnóstico de dependencias hasta la operación de laboratorio y la limpieza. El proyecto conserva sus funciones operativas existentes; puede escanear, capturar handshakes, levantar un rogue AP, modificar forwarding/NAT, interceptar tráfico mediante MITM y generar payloads/callbacks. **No es una herramienta segura por defecto ni debe utilizarse contra redes, dispositivos o cuentas de terceros.**
 
 ![Flujo de transición y operación](assets/operation-flow.png)
