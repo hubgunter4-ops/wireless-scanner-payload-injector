@@ -4,12 +4,22 @@ Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
 ## [Unreleased]
 
+## [2.2.0] — 2026-11-25
+
+### CLI, diagnóstico y distribución Debian
+
+- Se añade `--dashboard` con pestañas Resumen, Ejecutores, Perfiles y Monitor, tema negro/rojo/magenta y carga animada.
+- El monitor permite repetir la consulta local de disponibilidad en `PATH`; no lanza herramientas, no crea directorios ni activa radio.
+- Se incorpora el logo Wi‑Fi animado y tres mockups; la documentación explica los efectos del modo operacional.
+- Se agrega `packaging/build-deb.sh` para producir un paquete Debian `Architecture: all` con dependencia Python 3.10+; instalar el `.deb` no instala herramientas wireless del sistema.
+- La suite de verificación incluye pruebas del dashboard y mantiene la compilación sintáctica.
+
 ### IoT pentest como base
 
 - 6 perfiles IoT de diagnóstico basados en la guía pública
   `uqbarun/uqbarun.github.io@4f09668` ("IoT pentest",
-  `_wiki/iot-pentest.md`, 2023-06-01): `web-api`, `firmware`,
-  `wifi`, `ble`, `zigbee` y `sdr`, con habilidades, pasos y
+  `_wiki/iot-pentest.md`, 2023-06-01): `web-api`, `firmware`, `wifi`,
+  `ble`, `zigbee` y `sdr`, con habilidades, pasos y
   CWE/CAPEC/CPE de la guía (`src/wireless_tool/iot_profiles.py`,
   `docs/iot-pentest.md`).
 - Mapa binario → paquete apt para las herramientas IoT con paquete
@@ -22,21 +32,9 @@ Todos los cambios relevantes de este proyecto se documentan en este archivo.
 - Los perfiles solo comprueban dependencias con `shutil.which`;
   no activan radio, no escanean, no descifran ni ejecutan ataques.
 
-## [2.1.0] — 2026-09-09
-
-### Documentación
-
-- Se documenta el flujo de diagnóstico, operación autorizada y limpieza.
-- Se aclara la diferencia entre el paquete Python y las dependencias de sistema.
-- Se registra que el diagnóstico local encontró ausentes `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq` y `mitmproxy`; `iptables` estaba disponible.
-- Se añade una política de seguridad con alcance, datos prohibidos y reporte responsable.
-- Se añade un tutorial reproducible con diagnóstico seguro y laboratorio aislado.
-- Se añaden materiales de promoción, redistribución y un feed Atom estático.
-- Se aclaran las capacidades sensibles: deauth, handshakes, rogue AP, MITM, DNS spoofing, payloads y callbacks.
-
 ### Verificación
 
-- Las funciones principales del script no se modifican en esta actualización.
-- Las pruebas existentes y la compilación sintáctica deben pasar antes de etiquetar una release.
+- Suite completa de 48 pruebas, compilación Python y `git diff --check` correctos.
 
-[2.1.0]: https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/compare/56fed5b...HEAD
+[2.2.0]: https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/tag/v2.1.0

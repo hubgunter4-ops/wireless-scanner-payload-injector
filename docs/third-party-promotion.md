@@ -10,12 +10,12 @@ Repositorio canónico: https://github.com/hubgunter4-ops/wireless-scanner-payloa
 
 | Campo | Valor |
 |---|---|
-| Versión documentada | 2.1.0 |
+| Versión documentada | 2.2.0 |
 | Licencia | MIT |
 | Plataforma | Linux |
 | Python | >= 3.10 |
 | Estado | Experimental; requiere laboratorio y revisión de seguridad |
-| Instalación | `./install.sh` |
+| Instalación | Paquete `.deb` de la [release v2.2.0](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/tag/v2.2.0) o `./install.sh` |
 | Diagnóstico | `wireless-injector --check-only --json` |
 
 ## Límites de redistribución

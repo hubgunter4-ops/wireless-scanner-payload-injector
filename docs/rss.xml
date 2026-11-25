@@ -5,13 +5,13 @@
   <id>https://github.com/hubgunter4-ops/wireless-scanner-payload-injector</id>
   <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector" rel="alternate" />
   <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/blob/main/docs/rss.xml" rel="self" />
-  <updated>2026-09-09T08:00:00Z</updated>
+  <updated>2026-11-25T05:47:00Z</updated>
   <author><name>hubgunter4-ops</name></author>
   <entry>
-    <title>Versión 2.1.0 documentada</title>
-    <id>https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/tag/v2.1.0</id>
+    <title>Versión 2.2.0 — dashboard y paquete Debian</title>
+    <id>https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/tag/v2.2.0</id>
     <link href="https://github.com/hubgunter4-ops/wireless-scanner-payload-injector" rel="alternate" />
-    <updated>2026-09-09T08:00:00Z</updated>
-    <summary>Documentación de instalación, diagnóstico seguro, autorización, seguridad y redistribución. Las capacidades operativas no se modifican.</summary>
+    <updated>2026-11-25T05:47:00Z</updated>
+    <summary>Dashboard de diagnóstico local de solo lectura, monitor PATH repetible y paquete Debian instalable para Ubuntu/Kali. El modo operacional puede invocar herramientas y modificar el sistema según la acción.</summary>
   </entry>
 </feed>

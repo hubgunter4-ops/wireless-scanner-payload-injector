@@ -17,7 +17,7 @@ Herramienta Python para organizar flujos de **evaluación inalámbrica autorizad
 
 ![Flujo de transición y operación](assets/operation-flow.png)
 
-> **Estado:** experimental · **Versión:** 2.1.0 · **Licencia:** MIT · **Python:** 3.10+
+> **Estado:** experimental · **Versión:** 2.2.0 · **Licencia:** MIT · **Python:** 3.10+
 
 ## Captura de interfaz
 
@@ -53,6 +53,16 @@ Requiere Bash y Python 3.10 o superior. El instalador usa el site de paquetes de
 export PATH="$HOME/.local/bin:$PATH"
 wireless-injector --help
 ```
+
+### Paquete Debian para Ubuntu y Kali
+
+Descarga [wireless-scanner-payload-injector 2.2.0 (.deb)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/releases/download/v2.2.0/wireless-scanner-payload-injector_2.2.0-1_all.deb) e instálalo con:
+
+```bash
+sudo apt install ./wireless-scanner-payload-injector_2.2.0-1_all.deb
+```
+
+El paquete instala el CLI y requiere Python 3.10 o superior. No instala las herramientas wireless del sistema ni inicia operaciones de radio.
 
 El instalador Python (`install.sh`) no instala las herramientas del sistema. En Ubuntu y Kali Linux, el CLI incluye el flujo apt para comprobar y, si se solicita explícitamente, instalar las dependencias faltantes. El instalador de paquetes puede ejecutar `apt-get update` e `apt-get install` con `sudo` y **modifica el sistema**; revisa primero la vista previa y úsalo en una máquina de laboratorio.
 
@@ -137,4 +147,4 @@ El material de anuncio está en [docs/announcement.md](docs/announcement.md), la
 
 ## Historial
 
-Consulta [CHANGELOG.md](CHANGELOG.md) para los cambios documentados de la versión 2.1.0.
+Consulta [CHANGELOG.md](CHANGELOG.md) para los cambios documentados de la versión 2.2.0.

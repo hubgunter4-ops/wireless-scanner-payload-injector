@@ -17,6 +17,7 @@ evidence/
 screenshots/
 pruebas/
 artifacts/
+dist/
 results/
 *.apk
 *.aab

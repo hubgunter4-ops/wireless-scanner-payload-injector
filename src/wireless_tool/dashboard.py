@@ -195,7 +195,7 @@ def render_dashboard(
     )
     return "\n".join([
         rule,
-        f"  {logo}  WIRELESS INJECTOR  /  DIAGNOSTICO SEGURO  v2.1.0",
+        f"  {logo}  WIRELESS INJECTOR  /  DIAGNOSTICO SEGURO  v2.2.0",
         "  " + _tabs(active, color),
         rule,
         *content,

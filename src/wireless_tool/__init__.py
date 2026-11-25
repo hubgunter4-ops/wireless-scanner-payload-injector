@@ -3,4 +3,4 @@
 from .engine import BANNER_VARIANTS, WirelessTool
 
 __all__ = ["BANNER_VARIANTS", "WirelessTool"]
-__version__ = "2.1.0"
+__version__ = "2.2.0"
