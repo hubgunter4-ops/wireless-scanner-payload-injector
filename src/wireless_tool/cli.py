@@ -15,6 +15,7 @@ from .dependencies import (
 )
 from .engine import BANNER_VARIANTS, WirelessTool
 from .iot_profiles import check_profile, get_profile, list_profiles
+from .dashboard import display_dashboard, run_check_with_spinner
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -24,12 +25,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--banner-style", type=int, choices=range(len(BANNER_VARIANTS)))
     parser.add_argument("--show-banner", action="store_true", help="muestra el banner y termina")
     parser.add_argument("--check-only", action="store_true", help="valida configuración y dependencias sin crear archivos ni activar radio")
-    parser.add_argument("--install-missing", action="store_true", help="con --check-only, instala las dependencias del sistema que falten (apt-get)")
+    parser.add_argument("--install-missing", action="store_true", help="con --check-only, instala las dependencias apt faltantes en Ubuntu/Kali (modifica el sistema)")
     parser.add_argument("--dry-run", action="store_true", help="con --check-only, solo imprime los comandos apt que se ejecutarían, sin ejecutar nada")
     parser.add_argument("--json", action="store_true", help="emite el diagnóstico en JSON")
     parser.add_argument("--no-menu", action="store_true", help="reservado para integraciones no interactivas")
     parser.add_argument("--interactive", action="store_true", help="selector operacional diagnóstico/flujo wireless")
     parser.add_argument("--guided", action="store_true", help="muestra etapas y termina sin activar radio")
+    parser.add_argument("--dashboard", action="store_true", help="dashboard con monitor local repetible; solo lectura y sin activar radio")
+    parser.add_argument("--no-animation", action="store_true", help="desactiva las animaciones del dashboard")
     parser.add_argument("--list-iot-profiles", action="store_true", help="lista los perfiles IoT (guía uqbarun 4f09668) y termina, sin activar radio")
     parser.add_argument("--iot-profile", choices=list_profiles(), help="con --check-only, comprueba además las dependencias del perfil IoT indicado")
     return parser
@@ -84,6 +87,39 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         style = _banner_style(args.banner_style)
+        if args.dashboard:
+            incompatible = args.json or args.install_missing or args.dry_run or args.interactive or args.guided or args.show_banner or args.list_iot_profiles
+            if incompatible:
+                raise ValueError("--dashboard no se combina con JSON, instalación, dry-run ni otros modos de salida")
+            tool = WirelessTool(
+                interface=args.interface,
+                uplink_interface=args.uplink,
+                banner_style=style,
+                create_dirs=False,
+            )
+
+            def collect_dashboard_data():
+                payload = check_environment(tool)
+                profiles = {profile_id: check_profile(profile_id) for profile_id in list_profiles()}
+                payload["profile_tools"] = {
+                    profile_id: check["tools_found"]
+                    for profile_id, check in profiles.items()
+                }
+                return {"payload": payload, "profiles": profiles}
+
+            data = run_check_with_spinner(
+                collect_dashboard_data,
+                enabled=not args.no_animation,
+            )
+            display_dashboard(
+                data["payload"],
+                data["profiles"],
+                refresh_fn=lambda: run_check_with_spinner(
+                    collect_dashboard_data,
+                    enabled=not args.no_animation,
+                ),
+            )
+            return 0
         if args.list_iot_profiles:
             profiles = [get_profile(pid) for pid in list_profiles()]
             if args.json:

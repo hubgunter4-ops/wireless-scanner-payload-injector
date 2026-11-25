@@ -1,5 +1,9 @@
 # Wireless Scanner & Payload Injector
 
+<p align="center">
+  <img src="assets/brand/diamante-wifi.gif" alt="Diamante Wi‑Fi animado: identidad visual del proyecto" width="384">
+</p>
+
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/github/license/hubgunter4-ops/wireless-scanner-payload-injector)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector/blob/main/LICENSE)
 [![Top Language](https://img.shields.io/github/languages/top/hubgunter4-ops/wireless-scanner-payload-injector)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector)
@@ -8,6 +12,8 @@
 [![Uso autorizado](https://img.shields.io/badge/Uso%20autorizado-Laboratorio%20%C3%BAnicamente-yellow)](https://github.com/hubgunter4-ops/wireless-scanner-payload-injector)
 
 Herramienta Python para organizar flujos de **evaluación inalámbrica autorizada** en Linux, desde el diagnóstico de dependencias hasta la operación de laboratorio y la limpieza. El proyecto conserva sus funciones operativas existentes; puede escanear, capturar handshakes, levantar un rogue AP, modificar forwarding/NAT, interceptar tráfico mediante MITM y generar payloads/callbacks. **No es una herramienta segura por defecto ni debe utilizarse contra redes, dispositivos o cuentas de terceros.**
+
+> **Efectos operativos:** según el modo y la acción elegida, la herramienta puede invocar ejecutables externos, requerir privilegios, activar/desactivar interfaces de radio, iniciar procesos y servicios, crear o modificar archivos y cambiar forwarding, NAT o reglas de firewall. Ejecuta estas funciones únicamente en un laboratorio propio con autorización y un plan de reversión. `--dashboard` es una excepción de solo lectura: consulta disponibilidad local y no invoca esos ejecutores.
 
 ![Flujo de transición y operación](assets/operation-flow.png)
 
@@ -48,23 +54,22 @@ export PATH="$HOME/.local/bin:$PATH"
 wireless-injector --help
 ```
 
-El paquete Python no instala las herramientas de sistema. En el diagnóstico local realizado para esta documentación faltan `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hostapd`, `dnsmasq` y `mitmproxy`; `iptables` sí está disponible. Los cuatro primeros ejecutables suelen provenir del paquete `aircrack-ng`, mientras que `hostapd`, `dnsmasq` y `mitmproxy` se proporcionan como paquetes separados según la distribución.
+El instalador Python (`install.sh`) no instala las herramientas del sistema. En Ubuntu y Kali Linux, el CLI incluye el flujo apt para comprobar y, si se solicita explícitamente, instalar las dependencias faltantes. El instalador de paquetes puede ejecutar `apt-get update` e `apt-get install` con `sudo` y **modifica el sistema**; revisa primero la vista previa y úsalo en una máquina de laboratorio.
 
-En Debian/Ubuntu, prepara una máquina de laboratorio y verifica los nombres de paquete disponibles antes de instalar:
-
-```bash
-sudo apt update
-sudo apt install aircrack-ng hostapd dnsmasq mitmproxy iptables
-```
-
-Después confirma cada ejecutable sin iniciar ninguna operación:
+1. Comprueba el entorno y revisa los paquetes/comandos que se proponen:
 
 ```bash
-command -v airmon-ng airodump-ng aireplay-ng aircrack-ng hostapd dnsmasq mitmproxy iptables
-wireless-injector --check-only --json
+wireless-injector --check-only
+wireless-injector --check-only --dry-run
 ```
 
-Los nombres y versiones pueden variar en Fedora, Arch u otras distribuciones. Consulta el gestor de paquetes de tu distribución y no copies comandos de instalación a un sistema de producción. El instalador del proyecto sólo instala el paquete Python y no inicia operaciones inalámbricas.
+2. Solo si apruebas el cambio en Ubuntu o Kali basados en apt, invoca explícitamente el instalador integrado:
+
+```bash
+wireless-injector --check-only --install-missing
+```
+
+La relación binario→paquete deduplica `airmon-ng`, `airodump-ng`, `aireplay-ng` y `aircrack-ng` bajo `aircrack-ng`. Tras instalar, valida las rutas con `command -v airmon-ng airodump-ng aireplay-ng aircrack-ng hostapd dnsmasq mitmproxy iptables` y `wireless-injector --check-only --json`. Esto instala dependencias; no inicia una operación inalámbrica. Los nombres pueden variar por versión/distribución: revisa el `--dry-run` y consulta el gestor de paquetes local. No lo ejecutes en sistemas de producción.
 
 ## Diagnóstico sin radio
 
@@ -77,6 +82,14 @@ Este modo no requiere root, no activa la interfaz, no transmite frames y no crea
 ```bash
 wireless-injector --guided
 ```
+
+Para ver el dashboard tabulado —con el tema negro, acentos rojos y tipografía magenta neón—, el estado de ejecutores/perfiles y un monitor local reproducible, sin activar radio:
+
+```bash
+wireless-injector --dashboard
+```
+
+El dashboard ofrece las pestañas Resumen, Ejecutores, Perfiles y Monitor. Pulsa `r` dentro de Monitor para repetir la comprobación de presencia en `PATH` y revisar sus resultados ahí mismo. La animación de carga y el símbolo diamante/Wi‑Fi se muestran en terminales compatibles. El monitor no inicia herramientas, no crea directorios, no instala paquetes y no activa radio. Consulta los [mockups y detalles de navegación](docs/cli-dashboard.md).
 
 ### Perfiles IoT
 

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireless Injector · CLI mockups</title>
+<style>
+:root{color-scheme:dark;--bg:#070609;--panel:#0d090e;--panel2:#120b12;--pink:#ff38d2;--pink2:#ff70df;--red:#ff274d;--muted:#a88a9c;--white:#f5eaf3;--green:#7bf0b1;--rule:rgba(255,54,111,.25)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--white);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+body{background:radial-gradient(ellipse at 86% 13%,rgba(255,25,66,.18),transparent 28%),radial-gradient(ellipse at 12% 78%,rgba(176,0,74,.12),transparent 34%),#070609}
+.screen{width:1600px;min-height:100vh;margin:0 auto;padding:38px 52px 30px;background:radial-gradient(ellipse at 96% 3%,rgba(255,24,61,.17),transparent 26%),linear-gradient(118deg,rgba(255,0,54,.035),transparent 48%);display:flex;flex-direction:column;gap:24px}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 6px 23px;border-bottom:1px solid var(--rule)}
+.brand{display:flex;align-items:center;gap:18px}.mark{font-size:36px;font-weight:900;letter-spacing:-9px;color:var(--pink);text-shadow:0 0 15px rgba(255,56,210,.75),0 0 32px rgba(255,39,77,.5);padding-right:10px}.brand h1{font-size:26px;letter-spacing:2px;margin:0;color:var(--pink);text-shadow:0 0 14px rgba(255,56,210,.38)}.brand small{display:block;color:var(--muted);font-size:12px;letter-spacing:3px;margin-top:5px}
+.header-right{display:flex;align-items:center;gap:20px;color:var(--pink2);font-size:13px;letter-spacing:1px}.pulse{width:17px;height:17px;border:2px solid var(--pink);border-right-color:transparent;border-radius:50%;box-shadow:0 0 14px rgba(255,56,210,.6);transform:rotate(32deg)}
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--rule);padding:0 4px}.tab{padding:13px 24px;color:#a9899d;font-size:14px;letter-spacing:1px;border-bottom:3px solid transparent}.tab.active{color:var(--pink);border-color:var(--pink);text-shadow:0 0 11px rgba(255,56,210,.55);background:linear-gradient(180deg,rgba(255,39,77,.1),transparent)}
+main{flex:1;display:flex;flex-direction:column;gap:22px}.panel{border:1px solid rgba(255,56,130,.34);border-radius:10px;background:linear-gradient(145deg,rgba(20,12,20,.96),rgba(9,7,11,.97));box-shadow:0 0 36px rgba(255,0,54,.12),inset 0 0 30px rgba(255,0,80,.025);padding:27px 30px}.panel-title{color:var(--pink);font-size:20px;letter-spacing:1.7px;text-shadow:0 0 12px rgba(255,56,210,.35);margin:0 0 20px}.label{font-size:12px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.metric{padding:18px 20px;border:1px solid rgba(255,56,130,.2);border-radius:8px;background:rgba(20,10,20,.72)}.metric strong{display:block;color:var(--pink);font-size:30px;margin-top:10px;text-shadow:0 0 12px rgba(255,56,210,.35)}.metric small{color:var(--muted);font-size:13px}.progress{height:10px;border-radius:20px;margin-top:13px;background:#21131f;overflow:hidden}.progress i{display:block;width:12.5%;height:100%;background:linear-gradient(90deg,var(--red),var(--pink));box-shadow:0 0 16px rgba(255,56,210,.75)}
+.summary-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.kv{display:grid;grid-template-columns:210px 1fr;gap:15px 10px;align-items:center;margin-top:20px}.kv b{color:var(--pink2);font-weight:500}.kv span{color:var(--white)}.note{border-left:3px solid var(--red);padding:12px 15px;background:rgba(255,24,61,.07);color:#d5b7c8;line-height:1.7;font-size:14px}.status{color:var(--green)}.dim{color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:15px}th{text-align:left;color:var(--pink);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;background:rgba(255,35,87,.09)}th,td{padding:13px 15px;border-bottom:1px solid rgba(255,56,130,.13)}td{color:#ebdfe9}.group{color:var(--pink2)}.bad{color:#ff859a}.monitor-hint{display:inline-flex;align-items:center;gap:10px;padding:11px 16px;border:1px solid rgba(255,56,210,.3);border-radius:6px;color:var(--pink);background:rgba(255,56,210,.07);margin:8px 0 15px}.monitor-hint kbd{border:1px solid var(--pink);padding:3px 8px;border-radius:3px;color:var(--white)}
+footer{border-top:1px solid var(--rule);padding:19px 4px 0;display:flex;flex-direction:column;gap:9px;font-size:13px}.safe{color:var(--pink);letter-spacing:.5px}.warning{color:#ff8494}.subtle{color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<section class="screen" id="summary">
+<header><div class="brand"><div class="mark">◆◇◆</div><div><h1>WIRELESS INJECTOR</h1><small>DIAGNÓSTICO LOCAL</small></div></div><div class="header-right"><span>SOLO LECTURA</span><span>RADIO INACTIVA</span><i class="pulse"></i></div></header>
+<nav class="tabs"><div class="tab active">1 RESUMEN</div><div class="tab">2 EJECUTORES</div><div class="tab">3 PERFILES</div><div class="tab">4 MONITOR</div></nav>
+<main>
+<section class="panel"><h2 class="panel-title">Resumen del diagnóstico</h2><div class="metric-grid"><div class="metric"><span class="label">Ejecutores base</span><strong>1 / 8</strong><small>disponibles en PATH</small></div><div class="metric"><span class="label">Perfiles IoT</span><strong>6</strong><small>perfiles informativos</small></div><div class="metric"><span class="label">Disponibilidad</span><strong>12%</strong><div class="progress"><i></i></div></div></div></section>
+<div class="summary-grid"><section class="panel"><h2 class="panel-title">Entorno seleccionado</h2><div class="kv"><span class="label">Interfaz</span><b>wlan0</b><span class="label">Monitor</span><b>wlan0mon</b><span class="label">Uplink</span><b>eth0</b></div></section><section class="panel"><h2 class="panel-title">Alcance de esta vista</h2><div class="note">Comprueba presencia de ejecutables en PATH.<br>No lanza herramientas ni instala paquetes.</div><p class="subtle">El estado depende del entorno local actual.</p><div class="monitor-hint"><kbd>4</kbd> Monitor · <span class="status">1 / 16</span> PATH</div></section></div>
+</main>
+<footer><div class="safe">DASHBOARD: SOLO LECTURA · RADIO INACTIVA · SIN CAMBIOS</div><div class="warning">MODO OPERACIONAL: puede invocar herramientas externas y modificar el sistema según la acción.</div></footer>
+</section>
+<section class="screen" id="monitor">
+<header><div class="brand"><div class="mark">◆◇◆</div><div><h1>WIRELESS INJECTOR</h1><small>DIAGNÓSTICO LOCAL</small></div></div><div class="header-right"><span>MONITOR LOCAL</span><span>SNAPSHOT PATH</span><i class="pulse"></i></div></header>
+<nav class="tabs"><div class="tab">1 RESUMEN</div><div class="tab">2 EJECUTORES</div><div class="tab">3 PERFILES</div><div class="tab active">4 MONITOR</div></nav>
+<main>
+<section class="panel"><h2 class="panel-title">Monitor local · repetición del diagnóstico</h2><div class="label">Método: shutil.which · Radio: inactiva · Subprocesos: ninguno</div><div class="monitor-hint"><kbd>r</kbd> Repetir diagnóstico de solo lectura</div>
+<table><thead><tr><th>Grupo</th><th>Ejecutor</th><th>Resultado en PATH</th></tr></thead><tbody>
+<tr><td class="group">Wireless</td><td>airmon-ng</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Wireless</td><td>airodump-ng</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Wireless</td><td>aireplay-ng</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Wireless</td><td>aircrack-ng</td><td class="bad">AUSENTE</td></tr>
+<tr><td class="group">Lab</td><td>hostapd</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Lab</td><td>dnsmasq</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Lab</td><td>mitmproxy</td><td class="bad">AUSENTE</td></tr><tr><td class="group">Lab</td><td>iptables</td><td class="status">/usr/sbin/iptables</td></tr>
+<tr><td class="group">IoT / Análisis</td><td>nmap</td><td class="bad">AUSENTE</td></tr><tr><td class="group">IoT / Análisis</td><td>tshark</td><td class="bad">AUSENTE</td></tr><tr><td class="group">IoT / Análisis</td><td>binwalk</td><td class="bad">AUSENTE</td></tr><tr><td class="group">IoT / Análisis</td><td>bluetoothctl</td><td class="bad">AUSENTE</td></tr>
+</tbody></table></section>
+</main>
+<footer><div class="safe">DASHBOARD: SOLO LECTURA · RADIO INACTIVA · SIN CAMBIOS</div><div class="warning">MODO OPERACIONAL: puede invocar herramientas externas y modificar el sistema según la acción.</div><div class="subtle">Solo snapshot local de PATH; pulsar “r” vuelve a consultar las mismas rutas.</div></footer>
+</section>
+</body>
+</html>
